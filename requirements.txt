@@ -1,0 +1,16 @@
+Adafruit-Blinka==5.9.2
+adafruit-circuitpython-dht==3.5.3
+Adafruit-PlatformDetect==2.23.0
+Adafruit-PureIO==1.1.8
+astroid==2.4.2
+colorama==0.4.4
+isort==5.7.0
+lazy-object-proxy==1.4.3
+mccabe==0.6.1
+pyftdi==0.52.0
+pylint==2.6.0
+pyserial==3.5
+pyusb==1.1.0
+six==1.15.0
+toml==0.10.2
+wrapt==1.12.1
