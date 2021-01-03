@@ -10,13 +10,13 @@ class DHT():
         try:
             # Print the values to the serial port
             temperature_c = self.dhtDevice.temperature
-            temperature_f = temperature_c * (9 / 5) + 32
+            # temperature_f = temperature_c * (9 / 5) + 32
             humidity = self.dhtDevice.humidity
-            print(
-                "Temp: {:.1f} F / {:.1f} C    Humidity: {}% ".format(
-                    temperature_f, temperature_c, humidity
-                )
-            )
+            # print(
+            #     "Temp: {:.1f} F / {:.1f} C    Humidity: {}% ".format(
+            #         temperature_f, temperature_c, humidity
+            #     )
+            # )
             return [temperature_c, humidity]
 
         except RuntimeError as error:
