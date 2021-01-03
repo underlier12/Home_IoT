@@ -5,7 +5,7 @@ import json
 
 class ElasticsearchModule:
     def __init__(self, index):
-        self.es = Elasticsearch()
+        self.es = Elasticsearch('https://localhost:29200')
         self.index = index
 
     def check_existing_index(self):
