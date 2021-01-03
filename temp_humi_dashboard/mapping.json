@@ -1,14 +1,16 @@
 {
     "mappings": {
-        "properties": {
-            "timestamp": {
-                "type": "date"
-            },
-            "temperature": {
-                "type": "integer"
-            },
-            "humidity": {
-                "type": "integer"
+        "_doc": {
+            "properties": {
+                "timestamp": {
+                    "type": "date"
+                },
+                "temperature": {
+                    "type": "integer"
+                },
+                "humidity": {
+                    "type": "integer"
+                }
             }
         }
     }
