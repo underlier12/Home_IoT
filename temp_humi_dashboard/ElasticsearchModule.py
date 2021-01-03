@@ -20,6 +20,7 @@ class ElasticsearchModule:
 
         response = self.es.indices.create(
             index=self.index,
+            # body=j_body
             body=j_body
         )
         print(response)
