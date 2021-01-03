@@ -1,0 +1,16 @@
+{
+    "mappings": {
+        "properties": {
+            "timestamp": {
+                "type": "date",
+                "format": "YYYY-MM-DD'T'HH:mm:ss"
+            },
+            "temperature": {
+                "type": "integer"
+            },
+            "humidity": {
+                "type": "integer"
+            }
+        }
+    }
+}
