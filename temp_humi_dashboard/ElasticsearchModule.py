@@ -21,8 +21,8 @@ class ElasticsearchModule:
         print('j_body: ')
         print(j_body)
         response = self.es.indices.create(
-            index=self.index,
-            body=j_body
+            index=self.index
+            # body=j_body
         )
         print(response)
 
