@@ -10,7 +10,7 @@ class Monitoring():
         self.dht = DHT()
 
     def prerequisite(self):
-        if self.em.check_existing_index():
+        if not self.em.check_existing_index():
             self.em.make_index()
         else:
             print('index exist already')
