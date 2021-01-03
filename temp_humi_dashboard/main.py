@@ -13,12 +13,11 @@ class Monitoring():
         if not self.em.check_existing_index():
             self.em.make_index()
         else:
-            print('index exist already')
+            print('Index exist already')
 
     def gathering(self):
-        for _ in range(5):
-            data = self.dht.transfer_data()
-            self.em.insert_info(data)
+        data = self.dht.transfer_data()
+        self.em.insert_info(data)
 
 def main(case):
     m = Monitoring()
@@ -28,7 +27,7 @@ def main(case):
     elif case == 'g':
         m.gathering()
     else:
-        print('argument is not proper')
+        print('Argument is not proper')
 
 if __name__ == "__main__":
     main(sys.argv[1])

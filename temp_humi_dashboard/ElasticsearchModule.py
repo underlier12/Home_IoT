@@ -18,17 +18,15 @@ class ElasticsearchModule:
         with open("mapping.json", "r") as file:
             j_body = json.load(file)
 
-        print('j_body: ')
-        print(j_body)
         response = self.es.indices.create(
-            index=self.index
-            # body=j_body
+            index=self.index,
+            body=j_body
         )
         print(response)
 
     def insert_info(self, list):
         info = {
-            "date": datetime.now(),
+            "timestamp": datetime.now(),
             "temperature": list[0],
             "humidity": list[1]
         }
@@ -36,4 +34,4 @@ class ElasticsearchModule:
             index=self.index,
             body=info
         )
-        print(response)
+        # print(response)
