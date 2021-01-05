@@ -4,7 +4,7 @@ import adafruit_dht
 
 class DHT():
     def __init__(self):
-        self.dhtDevice = adafruit_dht.DHT11(board.D4)
+        self.dhtDevice = adafruit_dht.DHT22(board.D4)
 
     def measuring(self):
         try:
