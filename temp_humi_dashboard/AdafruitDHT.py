@@ -40,6 +40,7 @@ def main():
     dht = DHT()
     for _ in range(5):
         print(dht.measuring())
+        time.sleep(1)
 
 if __name__ == "__main__":
     main()
