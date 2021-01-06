@@ -34,3 +34,12 @@ class DHT():
             data = self.measuring()
             time.sleep(1)
         return data
+
+
+def main():
+    dht = DHT()
+    for _ in range(5):
+        print(dht.measuring)
+
+if __name__ == "__main__":
+    main()
