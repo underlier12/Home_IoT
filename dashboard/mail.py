@@ -17,6 +17,23 @@ class EmailModule():
         mail.login(self.user, self.pswd)
         return mail
 
+    def get_charges(self, mail):
+        charge_list = []
+        sent_list = [
+            "billing_info@kepco.co.kr",
+            "arisuyogm@i121.seoul.go.kr",
+            # "ktbill@kt-bill.kt.com"
+        ]
+        mail.select()
+
+        for sent in sent_list:
+            content = self.search_data(mail, sent)
+            fee = self.parse_fee(sent[0], content)
+            charge_list.append(fee)
+
+        print(charge_list)
+        return charge_list
+
     def set_date(self):
         range_date = []
         today = datetime.date.today()
@@ -28,20 +45,19 @@ class EmailModule():
         # print(range_date)
         return range_date
 
-    def get_electric_charge(self, mail):
-        mail.select()
+    def search_data(self, mail, sent):
+        # mail.select()
         range_date = self.set_date()
 
         _, data = mail.search(None, \
-            '(SINCE {} BEFORE {} \
-            FROM "billing_info@kepco.co.kr")'\
-            .format(range_date[1], range_date[0]))
+            '(SINCE {} BEFORE {} FROM {})'\
+            .format(range_date[1], range_date[0], sent))
 
         mail_ids = data[0]
         id_list = mail_ids.split()
 
-        for each in id_list:
-            _, dat = mail.fetch(each, '(RFC822)')
+        if id_list:
+            _, dat = mail.fetch(id_list[0], '(RFC822)')
             msg = email.message_from_bytes(dat[0][1])
 
             while msg.is_multipart():
@@ -49,43 +65,18 @@ class EmailModule():
             
             content = msg.get_payload(decode=True)
             content = content.decode('utf-8')
-            fee = self.parse_fee('E', content)
-            print(fee)
+        else:
+            content = None    
 
-    def get_water_charge(self, mail):
-        mail.select()
-        
-        _, data = mail.search(None, \
-            '(SINCE {} BEFORE {} \
-            FROM "arisuyogm@i121.seoul.go.kr")'\
-            .format("12-Nov-2020", "12-Jan-2021"))
-
-        mail_ids = data[0]
-        id_list = mail_ids.split()
-        
-        for each in id_list:
-            print('for loop')
-            _, dat = mail.fetch(each, '(RFC822)')
-            msg = email.message_from_bytes(dat[0][1])
-
-            while msg.is_multipart():
-                msg = msg.get_payload(0)
-            
-            content = msg.get_payload(decode=True)
-            content = content.decode('utf-8')
-            # print(content.decode('utf-8'))
-            fee = self.parse_fee('W', content)
-            print(fee)
+        return content
 
     def parse_fee(self, charge_type, content):
         soup = BeautifulSoup(content, 'html.parser')
 
         spans = soup.find_all('span')
-        if charge_type == 'E':
-            print('electric')
+        if charge_type == 'b':
             span = spans[7]
-        elif charge_type == 'W':
-            print('water')
+        elif charge_type == 'a':
             span = spans[4]
         else:
             print('communication')
@@ -93,14 +84,13 @@ class EmailModule():
         charge = span.get_text()
         korean = re.compile('[\u3131-\u3163\uac00-\ud7a3\s,]+')
         line = re.sub(korean, '', charge)
-        return line
+        return int(line)
 
 
 def main():
     em = EmailModule()
     mail = em.login()
-    em.get_water_charge(mail)
-    em.get_electric_charge(mail)
+    em.get_charges(mail)
 
 if __name__ == "__main__":
     main()
