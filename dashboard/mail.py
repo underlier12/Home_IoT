@@ -4,6 +4,8 @@ import os
 import email
 import datetime
 import re
+import base64
+import quopri
 
 from bs4 import BeautifulSoup
 
@@ -16,6 +18,53 @@ class EmailModule():
         mail = imaplib.IMAP4_SSL("imap.naver.com", 993)
         mail.login(self.user, self.pswd)
         return mail
+
+    def sender_decode(self, sender):
+        parsed_string = sender.split("?")
+        decoded = base64.b64decode(parsed_string[3]).decode(parsed_string[1], "ignore")
+        return decoded
+
+    def get_comm_charge(self, mail):
+        mail.select()
+        range_date = self.set_date()
+
+        _, data = mail.search(None, \
+            '(SINCE {} BEFORE {} FROM {})'\
+            .format(range_date[1], range_date[0], "ktbill@kt-bill.kt.com"))
+
+        mail_ids = data[0]
+        id_list = mail_ids.split()
+
+        print(len(id_list))
+
+        if id_list:
+            _, dat = mail.fetch(id_list[0], '(RFC822)')
+            msg = email.message_from_bytes(dat[0][1])
+
+            if msg.get_content_maintype() != 'multipart':
+                pass
+
+            for part in msg.walk():
+                if part.get_content_maintype() == 'multipart':
+                    print('multipart')
+                    continue
+                if part.get('Content-Disposition') is None:
+                    print('Content-Disposition')
+                    continue
+
+                filename = part.get_filename()
+                filename = self.sender_decode(filename)
+                print(filename)
+
+                if filename is not None:
+                    attch = 'attachments'
+                    # os.mkdir(attch)
+                    path = os.path.join(attch, filename)
+                    if not os.path.isfile(path):
+                        # print(path)
+                        f = open(path, 'wb')
+                        f.write(part.get_payload(decode=True))
+                        f.close()
 
     def get_charges(self, mail):
         charge_list = []
@@ -90,7 +139,8 @@ class EmailModule():
 def main():
     em = EmailModule()
     mail = em.login()
-    em.get_charges(mail)
+    # em.get_charges(mail)
+    em.get_comm_charge(mail)
 
 if __name__ == "__main__":
     main()
