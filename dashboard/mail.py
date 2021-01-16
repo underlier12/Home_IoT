@@ -8,6 +8,7 @@ import base64
 import quopri
 
 from bs4 import BeautifulSoup
+from PyPDF2 import PdfFileReader
 
 class EmailModule():
     def __init__(self):
@@ -65,6 +66,28 @@ class EmailModule():
                         f = open(path, 'wb')
                         f.write(part.get_payload(decode=True))
                         f.close()
+
+    def get_comm_charge_pdf(self, input_path):
+        with open(input_path, 'rb') as input_file:
+            reader = PdfFileReader(input_file)
+            PASSWORD = 'PSWD'
+            output_path = 'attachments/decrypted.pdf'
+            try:
+                reader.decrypt(PASSWORD)
+            except NotImplementedError:
+                command=f"qpdf --password='{PASSWORD}' --decrypt {input_path} {output_path}"
+                os.system(command)
+                with open(output_path, mode='rb') as fp:
+                    reader = PdfFileReader(fp)
+                    print(f"Number of page: {reader.getNumPages()}")
+
+            num = reader.numPages
+            print(num)
+
+            for idx in range(num):
+                page = reader.getPage(idx)
+                print(page)
+            
 
     def get_charges(self, mail):
         charge_list = []
@@ -138,9 +161,11 @@ class EmailModule():
 
 def main():
     em = EmailModule()
-    mail = em.login()
+    # mail = em.login()
     # em.get_charges(mail)
-    em.get_comm_charge(mail)
+    # em.get_comm_charge(mail)
+    input_path = 'attachments/2020년 12월 KT email 명'
+    em.get_comm_charge_pdf(input_path)
 
 if __name__ == "__main__":
     main()
