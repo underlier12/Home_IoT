@@ -6,9 +6,10 @@ import datetime
 import re
 import base64
 import quopri
+# import pikepdf
 
 from bs4 import BeautifulSoup
-from PyPDF2 import PdfFileReader
+from pikepdf import Pdf, Page
 
 class EmailModule():
     def __init__(self):
@@ -68,26 +69,10 @@ class EmailModule():
                         f.close()
 
     def get_comm_charge_pdf(self, input_path):
-        with open(input_path, 'rb') as input_file:
-            reader = PdfFileReader(input_file)
-            PASSWORD = 'PSWD'
-            output_path = 'attachments/decrypted.pdf'
-            try:
-                reader.decrypt(PASSWORD)
-            except NotImplementedError:
-                command=f"qpdf --password='{PASSWORD}' --decrypt {input_path} {output_path}"
-                os.system(command)
-                with open(output_path, mode='rb') as fp:
-                    reader = PdfFileReader(fp)
-                    print(f"Number of page: {reader.getNumPages()}")
-
-            num = reader.numPages
-            print(num)
-
-            for idx in range(num):
-                page = reader.getPage(idx)
-                print(page)
-            
+        pdf = Pdf.open(input_path, 'pswd')
+        # print(pdf.pages[0])
+        page = Page(pdf.pages[0])
+        print(page)
 
     def get_charges(self, mail):
         charge_list = []
