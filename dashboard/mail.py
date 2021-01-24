@@ -5,11 +5,9 @@ import email
 import datetime
 import re
 import base64
-import quopri
-# import pikepdf
+import pdfplumber
 
 from bs4 import BeautifulSoup
-from pikepdf import Pdf, Page
 
 class EmailModule():
     def __init__(self):
@@ -69,10 +67,9 @@ class EmailModule():
                         f.close()
 
     def get_comm_charge_pdf(self, input_path):
-        pdf = Pdf.open(input_path, 'pswd')
-        # print(pdf.pages[0])
-        page = Page(pdf.pages[0])
-        print(page)
+        with pdfplumber.open(input_path, password='pswd') as pdf:
+            page = pdf.pages[0]
+            print(page.extract_text())
 
     def get_charges(self, mail):
         charge_list = []
@@ -149,7 +146,7 @@ def main():
     # mail = em.login()
     # em.get_charges(mail)
     # em.get_comm_charge(mail)
-    input_path = 'attachments/2020년 12월 KT email 명'
+    input_path = 'attachments/kt'
     em.get_comm_charge_pdf(input_path)
 
 if __name__ == "__main__":
