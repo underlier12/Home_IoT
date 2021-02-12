@@ -36,3 +36,6 @@ class ElasticsearchModule:
             body=info
         )
         # print(response)
+
+    def insert_charges(self, list):
+        print('insert charges')
