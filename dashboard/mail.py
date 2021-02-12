@@ -8,16 +8,23 @@ import base64
 import pdfplumber
 import sys
 import argparse
+import configparser
 
 from bs4 import BeautifulSoup
 from datetime import date
 
 class EmailModule():
     def __init__(self, target=None):
-        self.user = 'user@naver.com'
-        self.pswd = 'pswd'
+        self.config = self.set_up_config()
+        # self.user = 'user@naver.com'
+        # self.pswd = 'pswd'
         self.ATTCH = 'attachments'
         self.d_day = self.adapt_date(target)
+
+    def set_up_config(self):
+        config = configparser.ConfigParser()
+        config.read('config.ini')
+        return config
 
     def adapt_date(self, tg):
         if tg is not None:
@@ -30,8 +37,10 @@ class EmailModule():
         return d_day
 
     def login(self):
+        user = self.config['PRIVACY']['USEREMAIL']
+        pswd = self.config['PRIVACY']['USERPSWD']
         mail = imaplib.IMAP4_SSL("imap.naver.com", 993)
-        mail.login(self.user, self.pswd)
+        mail.login(user, pswd)
         return mail
         
     def get_charges(self, mail):
@@ -117,7 +126,8 @@ class EmailModule():
         return decoded
 
     def extract_charge_from_pdf(self, path):
-        with pdfplumber.open(path, password='pswd') as pdf:
+        pswd = self.config['PRIVACY']['PDFPSWD']
+        with pdfplumber.open(path, password=pswd) as pdf:
             page = pdf.pages[0]
             text = page.extract_text()
         os.remove(path)
