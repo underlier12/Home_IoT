@@ -12,6 +12,7 @@ import configparser
 
 from bs4 import BeautifulSoup
 from datetime import date
+from elasticsearch_module import ElasticsearchModule
 
 class EmailModule():
     def __init__(self, target=None):
@@ -168,9 +169,19 @@ def main():
     target = args.target
     # print(target)
     em = EmailModule(target)
+    esm = ElasticsearchModule('charges')
     mail = em.login()
     charge_list = em.get_charges(mail)
     print(charge_list)
+    
+    info = {
+        "timestamp": datetime.datetime.now(),
+        "electric": charge_list[0],
+        "water": charge_list[1],
+        "communic": charge_list[2]
+    }
+    print(info)
+    esm.insert_infos(info)
 
 if __name__ == "__main__":
     main()
