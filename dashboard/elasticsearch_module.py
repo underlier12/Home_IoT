@@ -37,5 +37,8 @@ class ElasticsearchModule:
         )
         # print(response)
 
-    def insert_charges(self, list):
-        print('insert charges')
+    def insert_infos(self, info):
+        self.es.index(
+            index=self.index,
+            body=info
+        )

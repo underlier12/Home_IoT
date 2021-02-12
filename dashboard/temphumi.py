@@ -1,5 +1,5 @@
 from AdafruitDHT import DHT
-from ElasticsearchModule import ElasticsearchModule
+from elasticsearch_module import ElasticsearchModule
 
 import sys
 
