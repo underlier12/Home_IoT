@@ -1,6 +1,10 @@
 import time
 import board
 import adafruit_dht
+import argparse
+
+from datetime import datetime
+from elasticsearch_module import ElasticsearchModule
 
 class DHT():
     def __init__(self):
@@ -12,11 +16,6 @@ class DHT():
             temperature_c = self.dhtDevice.temperature
             # temperature_f = temperature_c * (9 / 5) + 32
             humidity = self.dhtDevice.humidity
-            # print(
-            #     "Temp: {:.1f} F / {:.1f} C    Humidity: {}% ".format(
-            #         temperature_f, temperature_c, humidity
-            #     )
-            # )
             return [temperature_c, humidity]
 
         except RuntimeError as error:
@@ -29,18 +28,23 @@ class DHT():
             raise error
 
     def transfer_data(self):
-        data = []
-        while not data:
+        for _ in range(5):
             data = self.measuring()
-            time.sleep(1)
-        return data
-
+            if data:
+                return data
+            else:
+                time.sleep(1)
 
 def main():
     dht = DHT()
-    for _ in range(5):
-        print(dht.measuring())
-        time.sleep(1)
+    em = ElasticsearchModule()
+    INDEX_NAME = 'tempnhumi'
+
+    data = dht.transfer_data()
+    if data:
+        em.insert_infos(INDEX_NAME, data)
+    else:
+        print('Data is not measured')
 
 if __name__ == "__main__":
     main()

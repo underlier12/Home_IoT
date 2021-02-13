@@ -25,19 +25,24 @@ class ElasticsearchModule:
         )
         print(response)
 
-    def insert_info(self, name, list):
-        info = {
-            "timestamp": datetime.now(),
-            "temperature": list[0],
-            "humidity": list[1]
-        }
-        self.es.index(
-            index=name,
-            body=info
-        )
-        # print(response)
+    def determine_info(self, data):
+        if len(data) == 2:
+            info = {
+                "timestamp": datetime.now(),
+                "temperature": data[0],
+                "humidity": data[1]
+            }
+        else:
+            info = {
+                "timestamp": datetime.now(),
+                "electric": data[0],
+                "water": data[1],
+                "communic": data[2]
+            }
+        return info
 
     def insert_infos(self, name, info):
+        info = self.determine_info(info)
         self.es.index(
             index=name,
             body=info
