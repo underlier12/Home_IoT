@@ -6,24 +6,25 @@ import sys
 class Monitoring():
     def __init__(self):
         self.index_name = 'tempnhumi'
-        self.em = ElasticsearchModule(self.index_name)
+        # self.em = ElasticsearchModule(self.index_name)
+        self.em = ElasticsearchModule()
         self.dht = DHT()
 
-    def prerequisite(self):
-        if not self.em.check_existing_index():
-            self.em.make_index()
+    def prerequisite(self, name):
+        if not self.em.check_existing_index(name):
+            self.em.make_index(self.index_name)
         else:
             print('Index exist already')
 
     def gathering(self):
         data = self.dht.transfer_data()
-        self.em.insert_info(data)
+        self.em.insert_info(self.index_name, data)
 
 def main(case):
     m = Monitoring()
 
     if case == 'p':
-        m.prerequisite()
+        m.prerequisite(m.index_name)
     elif case == 'g':
         m.gathering()
     else:

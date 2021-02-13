@@ -1,0 +1,20 @@
+{
+    "mappings": {
+        "_doc": {
+            "properties": {
+                "timestamp": {
+                    "type": "date"
+                },
+                "electric": {
+                    "type": "integer"
+                },
+                "water": {
+                    "type": "integer"
+                },
+                "communic": {
+                    "type": "integer"
+                }
+            }
+        }
+    }
+}
