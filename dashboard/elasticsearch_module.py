@@ -1,5 +1,5 @@
 from elasticsearch import Elasticsearch
-from datetime import datetime
+import datetime
 
 import json
 
@@ -28,13 +28,13 @@ class ElasticsearchModule:
     def determine_info(self, data, target=None):
         if len(data) == 2:
             info = {
-                "timestamp": datetime.now(),
+                "timestamp": datetime.datetime.now(),
                 "temperature": data[0],
                 "humidity": data[1]
             }
         else:
             if not target:
-                record_day = datetime.now()
+                record_day = datetime.datetime.now()
             else:
                 record_day = \
                     datetime.date(int(target[0]), int(target[1]), 1)
