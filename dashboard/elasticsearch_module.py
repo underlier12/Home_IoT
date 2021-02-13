@@ -25,7 +25,7 @@ class ElasticsearchModule:
         )
         print(response)
 
-    def determine_info(self, data):
+    def determine_info(self, data, target=None):
         if len(data) == 2:
             info = {
                 "timestamp": datetime.now(),
@@ -33,16 +33,21 @@ class ElasticsearchModule:
                 "humidity": data[1]
             }
         else:
+            if not target:
+                record_day = datetime.now()
+            else:
+                record_day = \
+                    datetime.date(int(target[0]), int(target[1]), 1)
             info = {
-                "timestamp": datetime.now(),
+                "timestamp": record_day,
                 "electric": data[0],
                 "water": data[1],
                 "communic": data[2]
             }
         return info
 
-    def insert_infos(self, name, info):
-        info = self.determine_info(info)
+    def insert_infos(self, name, info, target=None):
+        info = self.determine_info(info, target)
         self.es.index(
             index=name,
             body=info

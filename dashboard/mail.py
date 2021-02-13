@@ -15,8 +15,8 @@ from elasticsearch_module import ElasticsearchModule
 class EmailModule():
     def __init__(self, target=None):
         self.config = self.set_up_config()
-        self.ATTCH = 'attachments'
         self.d_day = self.adapt_date(target)
+        self.ATTCH = 'attachments'
 
     def set_up_config(self):
         config = configparser.ConfigParser()
@@ -164,7 +164,7 @@ def main():
     mail = em.login()
     charge_list = em.get_charges(mail)
     # print(charge_list)
-    esm.insert_infos(INDEX_NAME, charge_list)
+    esm.insert_infos(INDEX_NAME, charge_list, target)
 
 if __name__ == "__main__":
     main()
