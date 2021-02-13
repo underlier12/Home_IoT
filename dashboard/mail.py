@@ -1,24 +1,20 @@
 import imaplib
 import base64
-import os
+import os, sys
 import email
 import datetime
 import re
-import base64
 import pdfplumber
-import sys
 import argparse
 import configparser
 
 from bs4 import BeautifulSoup
-from datetime import date
+# from datetime import date, datetime
 from elasticsearch_module import ElasticsearchModule
 
 class EmailModule():
     def __init__(self, target=None):
         self.config = self.set_up_config()
-        # self.user = 'user@naver.com'
-        # self.pswd = 'pswd'
         self.ATTCH = 'attachments'
         self.d_day = self.adapt_date(target)
 
@@ -29,12 +25,10 @@ class EmailModule():
 
     def adapt_date(self, tg):
         if tg is not None:
-            # print(tg)
-            d_day = date(int(tg[0]), int(tg[1]), 1)
-            # print(d_day)
+            d_day = datetime.date(int(tg[0]), int(tg[1]), 1)
         else:
             margin = datetime.timedelta(30)
-            d_day = date.today() - margin
+            d_day = datetime.date.today() - margin
         return d_day
 
     def login(self):
@@ -65,13 +59,12 @@ class EmailModule():
     def set_date(self):
         range_date = []
         start = self.d_day
-        # today = datetime.date.today()
         margin = datetime.timedelta(30)
         end = (start + margin)
 
         range_date.append(start.strftime("%d-%b-%Y"))
         range_date.append(end.strftime("%d-%b-%Y"))
-        print(range_date)
+        # print(range_date)
         return range_date
 
     def search_data(self, mail, sent, range_date):
@@ -110,12 +103,11 @@ class EmailModule():
                 continue
             filename = part.get_filename()
             filename = self.sender_decode(filename)
-            print(filename)
+            # print(filename)
 
             if filename is not None:
                 path = os.path.join(self.ATTCH, filename)
                 if not os.path.isfile(path):
-                    # print(path)
                     f = open(path, 'wb')
                     f.write(part.get_payload(decode=True))
                     f.close()
@@ -135,14 +127,13 @@ class EmailModule():
         return text
 
     def parse_fee(self, charge_type, content):
+        if content is None:
+            return 0
+
         if charge_type == 'k':
             place_charge = content.find('월 요금')
-            # print(place_charge)
             charge = content[place_charge+4:place_charge+14]
-            print(charge)
         else:
-            if content is None:
-                return 0
             soup = BeautifulSoup(content, 'html.parser')
             spans = soup.find_all('span')
             if charge_type == 'b':
@@ -152,10 +143,8 @@ class EmailModule():
             else:
                 print('Not adaptable charge type')
             charge = span.get_text()
-            # print(charge)
         korean = re.compile('[\u3131-\u3163\uac00-\ud7a3\s,]+')
         line = re.sub(korean, '', charge)
-        # print(line)
         return int(line)
 
 def command_options():
@@ -167,21 +156,15 @@ def command_options():
 def main():
     args = command_options()
     target = args.target
-    # print(target)
+    INDEX_NAME = 'charges'
+
     em = EmailModule(target)
-    esm = ElasticsearchModule('charges')
+    esm = ElasticsearchModule()
+
     mail = em.login()
     charge_list = em.get_charges(mail)
-    print(charge_list)
-    
-    info = {
-        "timestamp": datetime.datetime.now(),
-        "electric": charge_list[0],
-        "water": charge_list[1],
-        "communic": charge_list[2]
-    }
-    print(info)
-    esm.insert_infos(info)
+    # print(charge_list)
+    esm.insert_infos(INDEX_NAME, charge_list)
 
 if __name__ == "__main__":
     main()
