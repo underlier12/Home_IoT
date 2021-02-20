@@ -31,6 +31,7 @@ pyperclip==1.8.1
 PyRect==0.1.4
 PyScreeze==0.1.26
 pyserial==3.5
+python-dateutil==2.8.1
 PyTweening==1.0.3
 pyusb==1.1.0
 requests==2.25.1
