@@ -1,6 +1,7 @@
 from elasticsearch import Elasticsearch
-import datetime
+from dateutil.relativedelta import relativedelta
 
+import datetime
 import json
 
 class ElasticsearchModule:
@@ -34,7 +35,8 @@ class ElasticsearchModule:
             }
         else:
             if not target:
-                record_day = datetime.datetime.now()
+                record_day = \
+                    datetime.datetime.now() - relativedelta(months=1)
             else:
                 record_day = \
                     datetime.date(int(target[0]), int(target[1]), 1)
