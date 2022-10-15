@@ -32,10 +32,17 @@ def essential():
 
     random.shuffle(target_list)
     selected_bgm = YOUTUBE + target_list[0]
-    play(selected_bgm)
+    _play(selected_bgm)
     return 'clear'
 
-def play(bgm):
+def _play(bgm):
     os.system('open -a "Google Chrome" ' + bgm)
     time.sleep(5)
     pyautogui.press('f')
+
+@app.route("/partyover")
+def partyover():
+    pyautogui.press('space')
+    time.sleep(5)
+    pyautogui.press('f')
+    return 'clear'
