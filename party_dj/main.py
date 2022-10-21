@@ -40,7 +40,7 @@ def _play(bgm):
     time.sleep(5)
     pyautogui.press('f')
 
-@app.route("/partyover")
+@app.get("/partyover")
 def partyover():
     pyautogui.press('space')
     time.sleep(5)
