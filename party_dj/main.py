@@ -36,7 +36,8 @@ def essential():
     return 'clear'
 
 def _play(bgm):
-    os.system('open -a "Google Chrome" ' + bgm)
+    # os.system('open -a "Google Chrome" ' + bgm)
+    os.system('chromium-browser ' + bgm)
     time.sleep(5)
     pyautogui.press('f')
 
